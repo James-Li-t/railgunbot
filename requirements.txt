@@ -1,0 +1,8 @@
+oppaipy
+discord.py
+praw
+osuapi
+requests
+dnspython
+PyNaCl
+async-timeout
