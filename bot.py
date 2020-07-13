@@ -277,4 +277,4 @@ async def rec(ctx, username):
         #await ctx.send("**Something broke, try again later**")
 
 
-client.run('NzMwNDgyODI0NDczMzQ2MDkw.XwYJSg.-INbSoDpDUtp2_EUoy-2pp8uOiw')
+client.run('NzMwNDgyODI0NDczMzQ2MDkw.Xwy67g.FCWQcyfH_K9TxemwqPaC-XnggmY')
