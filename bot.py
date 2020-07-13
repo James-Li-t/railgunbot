@@ -25,7 +25,7 @@ client.remove_command('help')
 
 @client.event
 async def on_ready():
-    await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game('Testbot V.1'))
+    await client.change_presence(status=discord.Status.do_not_disturb, activity=discord.Game('.help for commands!'))
     print("WE live boys can i get a pogU in the chat")
 
 
@@ -160,7 +160,7 @@ async def rec(ctx, username):
         mapid = results[0].beatmap_id
         mod = results[0].enabled_mods
         m = ""
-        
+
         if str(mod) == "NoMod":
             m = "NoMod"
         else:
