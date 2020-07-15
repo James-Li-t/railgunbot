@@ -9,7 +9,7 @@ import warnings
 import oppaipy
 
 from osuapi import OsuApi, ReqConnector, OsuMod
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
 from discord.ext import commands
 
 reddit = praw.Reddit(client_id='UIpkKGFsuHpFQQ', client_secret='nlIBmAO7V0TPI-DXsoq_-OiYYEc',
@@ -80,7 +80,6 @@ async def gifme(ctx, *, input):
 async def redhot(ctx, subx, amnt):
 
     generate = int(amnt)
-
 
     if generate <= 10:
 
@@ -254,15 +253,26 @@ async def rec(ctx, username):
         seconds = round(difference.total_seconds())
         x = timedelta(seconds = seconds)
 
-        embed = discord.Embed(
-            title=f"Played by {name}  **{accuracy}%**  [{round(pp,2)}pp]", url=prof, description=f"Mapped by {mapper}", color=0xfe58a3)
-        embed.set_author(
-            name=f"{maptitle} ({ver} [{round(star, 2)}☆] [{m}]) ", url=url, icon_url=icon)
-        embed.set_thumbnail(url=thumbnail)
-        embed.add_field(
-            name=f":point_right: Rank: **{rank}** :point_right:  **{combo}x / {combomax}x**  :point_right: **{score}** ", value=f"**:arrow_forward: [{_300}/{_100}/{_50}/{miss}]  [{round(ppfc,2)}pp for FC, {round(ppmax,2)}pp for SS]**", inline=True)
-        embed.set_footer(
-            text=f"Played on {timeplayed} UTC [{x} ago]")
+        if rank == "X":
+            embed = discord.Embed(
+                title=f"Played by {name}  **{accuracy}%**  [{round(pp,2)}pp]", url=prof, description=f"Mapped by {mapper}", color=0xfe58a3)
+            embed.set_author(
+                name=f"{maptitle} ({ver} [{round(star, 2)}☆] [{m}]) ", url=url, icon_url=icon)
+            embed.set_thumbnail(url=thumbnail)
+            embed.add_field(
+                name=f":point_right: Rank: **{rank}** :point_right:  **{combo}x / {combomax}x**  :point_right: **{score}** ", value=f"**:arrow_forward: [{_300}/{_100}/{_50}/{miss}]**", inline=True)
+            embed.set_footer(
+                text=f"Played on {timeplayed} UTC [{x} ago]")
+        else:
+            embed = discord.Embed(
+                title=f"Played by {name}  **{accuracy}%**  [{round(pp,2)}pp]", url=prof, description=f"Mapped by {mapper}", color=0xfe58a3)
+            embed.set_author(
+                name=f"{maptitle} ({ver} [{round(star, 2)}☆] [{m}]) ", url=url, icon_url=icon)
+            embed.set_thumbnail(url=thumbnail)
+            embed.add_field(
+                name=f":point_right: Rank: **{rank}** :point_right:  **{combo}x / {combomax}x**  :point_right: **{score}** ", value=f"**:arrow_forward: [{_300}/{_100}/{_50}/{miss}]  [{round(ppfc,2)}pp for FC, {round(ppmax,2)}pp for SS]**", inline=True)
+            embed.set_footer(
+                text=f"Played on {timeplayed} UTC [{x} ago]")
 
         await ctx.send(embed=embed)
 
@@ -270,8 +280,51 @@ async def rec(ctx, username):
         await ctx.send("**Information on this beatmap is currently not available, sorry!**")
     except IndexError:
         await ctx.send(f"**{username} has not recently played any songs**")
-    #except:
-        #await ctx.send("**Something broke, try again later**")
+    except:
+        await ctx.send("**Something broke, try again later or contact @Li James#5602**")
+
+@client.command()
+async def rrank(ctx):
+    warnings.filterwarnings("ignore")
+    lim = 100
+    yesterday = date.today() - timedelta(days=1)
+
+    while True:
+        try:
+            results = api.get_beatmaps(since = yesterday, limit = lim)
+            break
+        except ValueError:
+            lim -= 2
+            continue
+
+    maps = []
+    for map in results:
+        if str(map.approved) == 'BeatmapStatus.ranked':
+            maps.append(map.beatmapset_id)
+
+    rrmapid = maps[len(maps) - 1]
+    rrmap = api.get_beatmaps(beatmapset_id = rrmapid)
+
+    maptitle = rrmap[0].title
+    mapper = rrmap[0].creator
+    bpm = rrmap[0].bpm
+    stime = rrmap[0].total_length
+    time = timedelta(seconds = stime)
+    artist = rrmap[0].artist
+    rdate = rrmap[0].approved_date
+
+    thumbnail = f"https://b.ppy.sh/thumb/{rrmapid}l.jpg"
+    url = f"https://osu.ppy.sh/beatmapsets/{rrmapid}"
+
+    embed=discord.Embed(title="View Mapset", url= url, description=f"Created by {mapper}", color=0xa825e4)
+    embed.set_author(name=f"{maptitle} - {artist}")
+    embed.set_thumbnail(url=thumbnail)
+    embed.add_field(name=f"Bpm: [{bpm}] ",value = f"**Length: [{time}]**", inline=False)
+    embed.set_footer(text=f"Ranked on [{rdate}]")
+
+    await ctx.send("**Here is the most recently ranked std map: **")
+    await ctx.send(embed=embed)
+
 
 
 client.run('NzMwNDgyODI0NDczMzQ2MDkw.Xwy67g.FCWQcyfH_K9TxemwqPaC-XnggmY')
