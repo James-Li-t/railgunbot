@@ -286,18 +286,30 @@ async def rec(ctx, username):
 @client.command()
 async def rrank(ctx):
     warnings.filterwarnings("ignore")
-    lim = 100
-    yesterday = date.today() - timedelta(days=1)
 
+    day1 = date.today() - timedelta(days=1)
+    day = date.today()
+
+    lim = 50
     while True:
         try:
-            results = api.get_beatmaps(since = yesterday, limit = lim)
+            results = api.get_beatmaps(since = day, limit = lim)
             break
         except ValueError:
             lim -= 2
             continue
 
+    if not results:
+         lim = 50
+         while True:
+             try:
+                 results = api.get_beatmaps(since = day1, limit = lim)
+                 break
+             except ValueError:
+                 lim -= 2
+                 continue
     maps = []
+
     for map in results:
         if str(map.approved) == 'BeatmapStatus.ranked':
             maps.append(map.beatmapset_id)
@@ -322,7 +334,7 @@ async def rrank(ctx):
     embed.add_field(name=f"Bpm: [{bpm}] ",value = f"**Length: [{time}]**", inline=False)
     embed.set_footer(text=f"Ranked on [{rdate}]")
 
-    await ctx.send("**Here is the most recently ranked std map: **")
+    await ctx.send("**Here is the most recently ranked map: **")
     await ctx.send(embed=embed)
 
 
