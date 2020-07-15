@@ -8,9 +8,8 @@ import praw
 import warnings
 import oppaipy
 
-
 from osuapi import OsuApi, ReqConnector, OsuMod
-from datetime import datetime
+from datetime import timedelta, datetime
 from discord.ext import commands
 
 reddit = praw.Reddit(client_id='UIpkKGFsuHpFQQ', client_secret='nlIBmAO7V0TPI-DXsoq_-OiYYEc',
@@ -252,10 +251,8 @@ async def rec(ctx, username):
 
         nowtime = datetime.utcnow()
         difference = nowtime - timeplayed
-        seconds = difference.total_seconds()
-        minutes = seconds/60
-        x = math.modf(minutes)
-        seconds = x[0]
+        seconds = round(difference.total_seconds())
+        x = timedelta(seconds = seconds)
 
         embed = discord.Embed(
             title=f"Played by {name}  **{accuracy}%**  [{round(pp,2)}pp]", url=prof, description=f"Mapped by {mapper}", color=0xfe58a3)
@@ -265,7 +262,7 @@ async def rec(ctx, username):
         embed.add_field(
             name=f":point_right: Rank: **{rank}** :point_right:  **{combo}x / {combomax}x**  :point_right: **{score}** ", value=f"**:arrow_forward: [{_300}/{_100}/{_50}/{miss}]  [{round(ppfc,2)}pp for FC, {round(ppmax,2)}pp for SS]**", inline=True)
         embed.set_footer(
-            text=f"Played on {timeplayed} UTC [{round(minutes)} Minutes, {round(seconds * 60)} Seconds ago]")
+            text=f"Played on {timeplayed} UTC [{x} ago]")
 
         await ctx.send(embed=embed)
 
