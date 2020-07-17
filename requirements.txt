@@ -6,3 +6,4 @@ requests
 dnspython
 PyNaCl
 async-timeout
+dotenv

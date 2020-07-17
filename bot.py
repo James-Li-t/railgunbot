@@ -8,14 +8,23 @@ import praw
 import warnings
 import oppaipy
 
+from dotenv import load_dotenv
 from osuapi import OsuApi, ReqConnector, OsuMod
 from datetime import timedelta, datetime, date
 from discord.ext import commands
 
-reddit = praw.Reddit(client_id='UIpkKGFsuHpFQQ', client_secret='nlIBmAO7V0TPI-DXsoq_-OiYYEc',
-                     username='beep_boop_botterino', password='HjJWMvwF', user_agent='disc')
+load_dotenv()
+REDKEY = str(os.getenv('REDKEY'))
+REDSEC = str(os.getenv('REDSEC'))
+REDPASS = str(os.getenv('REDPASS'))
+OSUKEY = str(os.getenv('OSUKEY'))
+DISCKEY = str(os.getenv('DISCKEY'))
+GIFKEY = str(os.getenv('GIFKEY'))
 
-api = OsuApi("8a5b59a0b63e5aaf6be7a263b0006e4030bf6005",
+reddit = praw.Reddit(client_id=REDKEY, client_secret=REDSEC,
+                     username='beep_boop_botterino', password=REDPASS, user_agent='disc')
+
+api = OsuApi(OSUKEY,
              connector=ReqConnector())
 x = '.'
 client = commands.Bot(command_prefix=x)
@@ -68,7 +77,7 @@ async def emojify(ctx, *, input):
 async def gifme(ctx, *, input):
     holder = input
     input.replace(' ', '+')
-    loadinfo = {'api_key': 'YhiYyh2k0z9TjQkhqVHE0lT55dBIkFT2',
+    loadinfo = {'api_key': GIFKEY,
                 'q': f'{input.lower()}', 'limit': '10', 'offset': '0', 'rating': 'r', 'lang': 'en'}
     data = requests.get(
         'https://api.giphy.com/v1/gifs/search', params=loadinfo)
@@ -337,6 +346,4 @@ async def rrank(ctx):
     await ctx.send("**Here is the most recently ranked map: **")
     await ctx.send(embed=embed)
 
-
-
-client.run('NzMwNDgyODI0NDczMzQ2MDkw.Xwy67g.FCWQcyfH_K9TxemwqPaC-XnggmY')
+client.run(DISCKEY)
